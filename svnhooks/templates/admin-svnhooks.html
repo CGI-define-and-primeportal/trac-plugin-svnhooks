@@ -1,0 +1,167 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:i18n="http://genshi.edgewall.org/i18n">
+  <xi:include href="admin.html" />
+  <head>
+    <title>SVNHooks</title>
+  </head>
+  <script type="text/javascript">
+	jQuery(document).ready(function($) {
+		  $("#hook").change(function(){
+			  if (this.selectedIndex != 0) {
+				  $("#hookdiv").show();
+			  } else {
+				  $("#hookdiv").hide();
+			  }
+		  });
+	
+		  $("#path").autocomplete({
+		       source: function(request, response) {
+		         $.get("${href.diff()}", {q:request.term, format:'json'}, response)
+		       },
+		       minLength: 1
+		     });
+	})
+  </script>
+  <body>
+    <h1 class="pagetitle">Manage SVNHooks</h1>
+      
+      <table class="listing">
+	    <thead>
+	      <tr>
+	        <th>List of SVN Hooks</th>
+	        <th style="width: 60px;" class="expandercol">&nbsp;</th>
+	      </tr>
+	    </thead>
+	    <tbody>
+	        <tr class="listinfo even">
+	           <td>Require Commit Message</td>
+	           <td style="text-align: center;" class="expandercol">
+	            <a href="#"><div class="moreinfo">More info</div></a>
+	          </td>
+	        </tr>
+	        <tr class="hidden even">
+	          <td class="info-border" colspan="2">
+                  <div class="hookdescription">
+                    <p>
+                      Select the paths below that will require commits to contain a commit
+                      message. If activated on root no further options are needed as all
+                      commits will require messages to be present.
+                    </p><p>
+                      To avoid some meaningless messages it is required that the commit message
+                      has 5 non blank characters present. There is no other restrictions on the
+                      message.
+                    </p>
+                  </div> 
+	          </td>
+	         </tr>
+            <tr class="listinfo even">
+               <td>Require Ticket number in Commit Message</td>
+               <td style="text-align: center;" class="expandercol">
+                <a href="#"><div class="moreinfo">More info</div></a>
+              </td>
+            </tr>
+            <tr class="hidden even">
+              <td class="info-border" colspan="2">
+                  <div class="hookdescription">
+                    <p>
+                      This Subversion Hook will scan each commit message and will require commits to contain a Ticket
+                      number.
+                        </p><p>
+                      It is possible to enable this hook on a specific folder. Any commits
+                      with at least one file below this directory will be subject to the 
+                      rule.
+                        </p><p>
+                      Required Ticket number means that a commit without connection to an
+                      Ticket will fail. A failure message will state that this repository
+                      or path requires commit messages that has Ticket numbers.
+                        </p>
+                   </div>
+              </td>
+             </tr>
+	         
+        </tbody>
+      </table>            
+      <div class="field">
+        <form  id="addsvnhook" method="post" class="blue form-basis margin-bottom" action="" title="Add SVNHook">
+              <div class="field">
+                <h4>Add Hook</h4>
+                </div>
+              <div class="field">
+                <label>Hook:</label>
+	            <select name="hook" id="hook">
+	                <option value="0">Select Subversion Hook Here</option>
+	                <option value="1">Require Commit Message</option>
+	                <option value="2">Require Ticket number in Commit Message</option>
+	            </select>
+	            <div><p class="help">Select valid subversion hook above to set options</p></div>
+              </div>
+              <div id="hookdiv" style="display:none;">      
+                <div class="field">
+                  <h4 class="hookoptionlabel">Option Folder:</h4>
+                  <div class="hookoptiondescr">
+                    Select the folder where the above selected hook required:
+                  </div>
+                  <label>Path:</label>
+                  <input type="text" name="path" id="path" class="textwidget" size="60" title="This field supports auto-complete, except for paths which your own user can not read."/>
+                 </div>
+              </div>
+              <div class="field">
+              <div class="buttons">
+                <input id="add" type="submit" class="sprite-button sprite-buttonCreate80 sprite-buttonSpecial" name="add" value="${_('Add')}"/>
+              </div>
+        	 </div>
+        </form>
+      </div>
+      <div class="clear">&nbsp;</div>
+        <py:choose>
+          <form py:when="svnhooks" id="svnhook_table" method="post" action="">
+          <table class="table-style">
+          <py:for each="i, svnhook in enumerate(svnhooks)" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">          
+           <tbody>
+            <tr class="listinfo">
+            <td><h2><a style="text-decoration: none;" href="${panel_href(svnhook)}">${svnhook_names[svnhook]}</a></h2>
+            </td>
+            <td style="text-align: center;" class="expandercol">
+                <a href="#"><div class="showoption">Show options</div></a>
+              </td>
+            </tr>
+            </tbody>
+            <tbody class="hidden">
+                <tr class="listinfo"><th class="sel">&nbsp;</th>
+                  <th>Path</th>
+                </tr>
+              <?python
+              [ID,PATH] = range(2)
+              ?>
+               <py:for each="i, row in enumerate(svnhooks[svnhook])" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">
+                <tr class="listinfo">
+                  <td class="sel"><input type="checkbox" name="sel" class="selcheckbox" value="${row[ID]}" /></td>
+                  <td class="author">${row[PATH]}</td>
+                 </tr>
+                </py:for>
+              </tbody>           
+              </py:for>
+              </table>
+            <div class="buttons">
+              <input  type="submit" disabled="disabled" class="remove-button sprite-button sprite-button120"  name="remove" value="${_('Remove selected items')}" />
+            </div>
+            <p class="help">
+              You can remove all items from this list to completely avoid hooks.
+            </p>
+          </form>
+
+          <p py:otherwise="" class="help">
+            As long as you don't add any items to the list, this field
+            will remain completely hidden from the user interface.
+          </p>
+        </py:choose>
+
+
+  </body>
+
+</html>

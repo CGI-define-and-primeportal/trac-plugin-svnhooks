@@ -1,0 +1,58 @@
+
+p {
+ color:grey;
+}
+
+.expandercol {
+  width: 30px;
+}
+.moreinfo, .lessinfo {
+  height: 14px;
+  width: 100px;
+  cursor: pointer;
+}
+.showoption, .hideoption {
+  height: 14px;
+  width: 110px;
+  cursor: pointer;
+}
+.moreinfo, .showoption {
+  background: url(../../define/bg-tabheader-arrowdown.png) no-repeat 0% 14%;
+}
+.lessinfo, .hideoption {
+  background: url(../../define/bg-tabheader-arrowup.png) no-repeat 0% 14%;
+}
+.hidden {
+  display: none;
+}
+.hook_required {
+  color: red;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+  padding-left: .5em;
+}
+.path_required {
+  color: red;
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+  padding-left: .5em;
+}
+
+table.table-style tbody th{
+    border-bottom: 1px solid #CCCCCC;
+    color: #333333;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 6px 0 7px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+table.table-style tbody th, table.table-style tbody td {
+	float:left;
+}
+table.table-style tbody tr, table.lsiting tbody tr {
+    border-bottom: 1px solid #CCCCCC;
+}

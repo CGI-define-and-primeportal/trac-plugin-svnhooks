@@ -69,7 +69,7 @@ class SVNHooks(Component):
                     add_warning(req,_('Already exists'))
                 else:
                     obj.insert( path, hook)
-                    add_notice(req, _('Added SVN hook "%s" for path :%s succesfully' %(hook, path)))               
+                    add_notice(req, _('Added SVN hook "%s" for path :%s successfully' %(hook, path)))               
             elif req.args.get('remove'):
                 sel = req.args.get('sel')
                 if not sel:
@@ -79,7 +79,7 @@ class SVNHooks(Component):
                 for id in sel:
                     path, hook = obj.get_by_id(id)
                     obj.delete(id)
-                    add_notice(req, _('Hooks "%s" for path :%s deleted succesfully' %(hook, path)))
+                    add_notice(req, _('Hooks "%s" for path :%s deleted successfully' %(hook, path)))
             req.redirect(req.href.admin(cat, page))
         add_stylesheet(req, 'svnhooks/css/svnhooks.css')
         add_javascript(req, 'svnhooks/js/svnhooks.js')

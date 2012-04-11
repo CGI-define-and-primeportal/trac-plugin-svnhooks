@@ -7,7 +7,7 @@ class SVNHooksModel(object):
                       Table('svnhooks', key='id')[
                         Column('id', type='int', auto_increment=True),
                         Column('path'),
-                        Column('hook', type='int'),
+                        Column('hook', type='text'),
                         Index(['path', 'hook'])]
                     ]  
 

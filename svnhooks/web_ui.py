@@ -43,14 +43,32 @@ from trac.admin.api import IAdminPanelProvider
 from trac.web.chrome import Chrome, add_notice, add_warning
 from model import SVNHooksModel
 from trac.util.compat import sha1
+from svnhooks.api import IConfigurableCommitHookProvider
 
-__all__ = ['SVNHooks']
 
 class SVNHooks(Component):
     implements(IAdminPanelProvider,
                IEnvironmentSetupParticipant, ITemplateProvider)
 
-    hook_names = {1:"Require Commit Message",2:"Require for Ticket number in Commit Message",3:"Scan for Ticket number in Commit Message"}
+    
+    
+    configurable_hooks = ExtensionPoint(IConfigurableCommitHookProvider)
+    
+    def is_enabled_for_changeset(self, component, changeset):
+        component_name = self.env._component_name(component.__class__)
+        obj = SVNHooksModel(self.env)
+        svnhooks = obj.getall_path()
+       
+        changes = list(changeset.get_changes()) 
+        for path, kind, action, base_path, base_rev in changes:
+            for svnpath in svnhooks:
+                if path.startswith(svnpath[1:]):
+                    for row in svnhooks[svnpath]:
+                        id, hook = row[0], row[1]
+                        if hook == component_name:
+                            self.log.debug("Changeset path %s matches commit hook %s for parent path %s" % (path, component_name, svnpath))
+                            return True
+                    return False
     
    # IAdminPanelProvider
     def get_admin_panels(self, req):
@@ -85,10 +103,15 @@ class SVNHooks(Component):
         add_javascript(req, 'svnhooks/js/svnhooks.js')
         
         data['svnhooks'] = obj.getall()
-        data['svnhook_names'] = self.hook_names
+        data['svnhook_info'] = list(self._configurable_hooks_info())
+        data['svnhook_names'] = {1:"Something"}
         return 'admin-svnhooks.html', data
     
-
+    def _configurable_hooks_info(self):
+        for hook_provider in self.configurable_hooks:
+            for hook in hook_provider.get_hooks():
+                hook_desc = hook_provider.get_hook_description(hook)
+                yield (hook, hook_desc, hook_provider)
 
      # IEnvironmentSetupParticipant
     def environment_created(self):

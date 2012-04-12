@@ -5,7 +5,6 @@ Created on 10 Apr 2012
 '''
 
 from trac.core import *
-from svnhooks.web_ui import SVNHooks
 import re
 
 class IConfigurableCommitHookProvider(Interface):
@@ -43,6 +42,7 @@ class RequireMessageCommitHook(Component):
     ### IRepositoryChangeListener methods
     def changeset_pending(self, repos, changeset):
         if self.env.is_component_enabled('svnhooks'):
+            from svnhooks.web_ui import SVNHooks
             hooks_mgr = SVNHooks(self.env)
             if hooks_mgr.is_enabled_for_changeset(self.__class__, changeset):
                 if not changeset.message and len(changeset.message)<1:

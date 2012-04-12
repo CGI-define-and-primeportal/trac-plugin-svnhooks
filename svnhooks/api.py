@@ -40,7 +40,7 @@ import re
 from trac.core import *
 from trac.env import IEnvironmentSetupParticipant
 from trac.db.api import DatabaseManager
-from trac.versioncontrol.api import IRepositoryChangeListener
+from trac.versioncontrol.api import IRepositoryChangeManipulator
 
 from svnhooks.model import SVNHooksModel
 
@@ -70,7 +70,8 @@ class SVNHookSystem(Component):
                         if hook == provider_name:
                             self.log.debug("Changeset path %s matches commit hook %s for parent path %s" % (path, provider_name, svnpath))
                             return True
-                    return False
+        self.log.debug("Changeset path %s doesn't match commit hook %s for parent path %s" % (path, provider_name, svnpath))
+        return False
     
    
     # IEnvironmentSetupParticipant
@@ -99,7 +100,7 @@ class SVNHookSystem(Component):
 
 
 class RequireMessageCommitHook(Component):
-    implements(IConfigurableCommitHookProvider, IRepositoryChangeListener)
+    implements(IConfigurableCommitHookProvider, IRepositoryChangeManipulator)
     
     hook_info = {"Require Commit Message": """<p>
                       Select the paths below that will require commits to contain a commit
@@ -120,24 +121,21 @@ class RequireMessageCommitHook(Component):
         from genshi.builder import Markup
         return Markup(self.hook_info[name])
     
-    ### IRepositoryChangeListener methods
+    ### IRepositoryChangeManipulator methods
     def changeset_pending(self, repos, changeset):
+        errors = []
         if self.env.is_component_enabled('svnhooks'):
             hooks_mgr = SVNHookSystem(self.env)
             if hooks_mgr.is_enabled_for_changeset(self, changeset):
                 if not changeset.message or len(changeset.message.strip())<5:
-                    raise TracError("""The Repository restricts commits with no messages.
-                    Please Check in with an appropriate message.""")
-        
-    def changeset_modified(self, repos, changeset):
-        pass
-    
-    def changeset_added(self, repos, changeset):
-        pass
+                    errors.append("The Repository restricts commits with no messages."
+                    " \n\tPlease Check in with an appropriate message.")
+        return errors
+
     
     
 class RequireTicketCommitHook(Component):
-    implements(IConfigurableCommitHookProvider, IRepositoryChangeListener)
+    implements(IConfigurableCommitHookProvider, IRepositoryChangeManipulator)
     
     hook_info = {"Require for Ticket number in Commit Message": """<p>
                   This Subversion Hook will scan each commit message and will require commits to contain a Ticket
@@ -160,7 +158,7 @@ class RequireTicketCommitHook(Component):
         from genshi.builder import Markup
         return Markup(self.hook_info[name])
     
-    ### IRepositoryChangeListener methods
+    ### IRepositoryChangeManipulator methods
     def changeset_pending(self, repos, changeset):
         if self.env.is_component_enabled('svnhooks'):
             hooks_mgr = SVNHookSystem(self.env)
@@ -169,16 +167,10 @@ class RequireTicketCommitHook(Component):
                     log = "EMPTY"
                 else:
                     log = changeset.message
-                self._check_require_ticket(log)
-    
-    def changeset_modified(self, repos, changeset):
-        pass
-    
-    def changeset_added(self, repos, changeset):
-        pass  
+                return self._check_require_ticket(log)
     
     def _check_require_ticket(self, log):
-    
+        errors = []
         ticket_prefix = '(?:#|(?:ticket|issue|bug)[: ]?)'
         ticket_re = re.compile(ticket_prefix + '([0-9]+)')
         tickets = []
@@ -186,9 +178,10 @@ class RequireTicketCommitHook(Component):
         tickets += ticket_re.findall(log.lower())
         # At least one ticket has to be mentioned in the log message
         if tickets == []:
-            raise TracError("""Failed to commit as You are checking in files into a repository that restricts
-            commits without a reference to an issue. Please refer to an issue with #<num>
-            in your commit message.""") 
+            errors.append("Failed to commit as you are checking in files into a repository that restricts"
+            " commits without a reference to an issue.\n\tPlease refer to an issue with #<num>"
+            " in your commit message.") 
+            return errors
         db = self.env.get_db_cnx()
         cursor = db.cursor()
         cursor.execute("SELECT COUNT(id) FROM ticket WHERE "
@@ -197,9 +190,10 @@ class RequireTicketCommitHook(Component):
         # At least one of the tickets mentioned in the log messages has to
         # be open
         if not row or row[0] < 1:
-            raise TracError("""Failed to commit as You are checking in files into a repository that restricts
-            commits without a reference to a open ticket. Please refer to an ticket with #<num>
-            in your commit message.""")
+            errors.append("Failed to commit as you are checking in files into a repository that restricts"
+            " commits without a reference to a open ticket. \n\tPlease refer to an ticket with #<num>"
+            " in your commit message.")
+        return errors
    
 
 

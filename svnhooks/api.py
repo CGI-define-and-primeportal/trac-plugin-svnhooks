@@ -61,24 +61,16 @@ class SVNHookSystem(Component):
         provider_name = self.env._component_name(type(component))
         obj = SVNHooksModel(self.env)
         svnhooks = obj.getall_path()
-        try:
-            fobj = open('/home/karl/svnlog', 'a')
-            fobj.write("="*30)
-            fobj.write("\n")
-            changes = list(changeset.get_changes()) 
-            for path, kind, action, base_path, base_rev in changes:
-                for svnpath in svnhooks:
-                    if path.startswith(svnpath[1:]):
-                        for row in svnhooks[svnpath]:
-                            id, hook = row[0], row[1]
-                            if hook == provider_name:
-                                fobj.write("Changeset path %s matches commit hook %s for parent path %s END\n" % (path, provider_name, svnpath))
-                                self.log.debug("Changeset path %s matches commit hook %s for parent path %s" % (path, provider_name, svnpath))
-                                return True
-                        fobj.write("Changeset path %s doesn't match commit hook %s for parent path %s END\n" % (path, provider_name, svnpath))
-                        return False
-        finally:
-            fobj.close()
+        changes = list(changeset.get_changes()) 
+        for path, kind, action, base_path, base_rev in changes:
+            for svnpath in svnhooks:
+                if path.startswith(svnpath[1:]):
+                    for row in svnhooks[svnpath]:
+                        id, hook = row[0], row[1]
+                        if hook == provider_name:
+                            self.log.debug("Changeset path %s matches commit hook %s for parent path %s" % (path, provider_name, svnpath))
+                            return True
+                    return False
     
    
     # IEnvironmentSetupParticipant

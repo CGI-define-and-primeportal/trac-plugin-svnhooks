@@ -49,7 +49,8 @@ setup(
     test_suite = 'nose.collector',
     entry_points = {
         'trac.plugins': [
-            'svnhooks.web_ui = svnhooks.web_ui',
+            'svnhooks.admin = svnhooks.admin',
+            'svnhooks.api = svnhooks.api',
         ]
     }
 )

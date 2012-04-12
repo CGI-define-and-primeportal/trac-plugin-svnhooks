@@ -38,8 +38,10 @@
 	      </tr>
 	    </thead>
 	    <tbody>
+	    <py:for each="hook_provider in svnhook_names.keys()" py:with="hook_desc=svnhook_descriptions[hook_provider];
+	    		hook_name=svnhook_names[hook_provider];" >
 	        <tr class="listinfo even">
-	           <td>Require Commit Message</td>
+	           <td>${hook_name}</td>
 	           <td style="text-align: center;" class="expandercol">
 	            <a href="#"><div class="moreinfo">More info</div></a>
 	          </td>
@@ -47,43 +49,11 @@
 	        <tr class="hidden even">
 	          <td class="info-border" colspan="2">
                   <div class="hookdescription">
-                    <p>
-                      Select the paths below that will require commits to contain a commit
-                      message. If activated on root no further options are needed as all
-                      commits will require messages to be present.
-                    </p><p>
-                      To avoid some meaningless messages it is required that the commit message
-                      has 5 non blank characters present. There is no other restrictions on the
-                      message.
-                    </p>
+                    ${hook_desc}
                   </div> 
 	          </td>
 	         </tr>
-            <tr class="listinfo even">
-               <td>Require Ticket number in Commit Message</td>
-               <td style="text-align: center;" class="expandercol">
-                <a href="#"><div class="moreinfo">More info</div></a>
-              </td>
-            </tr>
-            <tr class="hidden even">
-              <td class="info-border" colspan="2">
-                  <div class="hookdescription">
-                    <p>
-                      This Subversion Hook will scan each commit message and will require commits to contain a Ticket
-                      number.
-                        </p><p>
-                      It is possible to enable this hook on a specific folder. Any commits
-                      with at least one file below this directory will be subject to the 
-                      rule.
-                        </p><p>
-                      Required Ticket number means that a commit without connection to an
-                      Ticket will fail. A failure message will state that this repository
-                      or path requires commit messages that has Ticket numbers.
-                        </p>
-                   </div>
-              </td>
-             </tr>
-	         
+	    </py:for>    
         </tbody>
       </table>            
       <div class="field">
@@ -94,9 +64,9 @@
               <div class="field">
                 <label>Hook:</label>
 	            <select name="hook" id="hook">
-	                <option value="0">Select Subversion Hook Here</option>
-	                <option value="1">Require Commit Message</option>
-	                <option value="2">Require Ticket number in Commit Message</option>
+	            	<option value="0">Select Subversion Hook Here</option>	            
+	                <option py:for="hook_provider in svnhook_names.keys()" py:with="hook_name=svnhook_names[hook_provider];"  
+	                			value="${hook_provider}">${hook_name}</option>
 	            </select>
 	            <div><p class="help">Select valid subversion hook above to set options</p></div>
               </div>
@@ -124,7 +94,7 @@
           <py:for each="i, svnhook in enumerate(svnhooks)" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">          
            <tbody>
             <tr class="listinfo">
-            <td><h2><a style="text-decoration: none;" href="${panel_href(svnhook)}">${svnhook_names[svnhook]}</a></h2>
+            <td><h2>${svnhook_names[svnhook]}</h2>
             </td>
             <td style="text-align: center;" class="expandercol">
                 <a href="#"><div class="showoption">Show options</div></a>

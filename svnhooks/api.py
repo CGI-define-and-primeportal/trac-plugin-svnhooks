@@ -128,33 +128,7 @@ class RequireMessageCommitHook(Component):
                 if not changeset.message or len(changeset.message.strip())<5:
                     raise TracError("""The Repository restricts commits with no messages.
                     Please Check in with an appropriate message.""")
-    
-                                
-    def _check_require_ticket(self, log):
-    
-        ticket_prefix = '(?:#|(?:ticket|issue|bug)[: ]?)'
-        ticket_re = re.compile(ticket_prefix + '([0-9]+)')
-        tickets = []
         
-        tickets += ticket_re.findall(log.lower())
-        # At least one ticket has to be mentioned in the log message
-        if tickets == []:
-            raise TracError("""Failed to commit as You are checking in files into a repository that restricts
-            commits without a reference to an issue. Please refer to an issue with #<num>
-            in your commit message.""") 
-        db = self.env.get_db_cnx()
-        cursor = db.cursor()
-        cursor.execute("SELECT COUNT(id) FROM ticket WHERE "
-                       "status <> 'closed' AND id IN (%s)" % ','.join(tickets))
-        row = cursor.fetchone()
-        # At least one of the tickets mentioned in the log messages has to
-        # be open
-        if not row or row[0] < 1:
-            raise TracError("""Failed to commit as You are checking in files into a repository that restricts
-            commits without a reference to a open ticket. Please refer to an ticket with #<num>
-            in your commit message.""")
-
-    
     def changeset_modified(self, repos, changeset):
         pass
     
@@ -203,7 +177,30 @@ class RequireTicketCommitHook(Component):
     def changeset_added(self, repos, changeset):
         pass  
     
+    def _check_require_ticket(self, log):
     
+        ticket_prefix = '(?:#|(?:ticket|issue|bug)[: ]?)'
+        ticket_re = re.compile(ticket_prefix + '([0-9]+)')
+        tickets = []
+        
+        tickets += ticket_re.findall(log.lower())
+        # At least one ticket has to be mentioned in the log message
+        if tickets == []:
+            raise TracError("""Failed to commit as You are checking in files into a repository that restricts
+            commits without a reference to an issue. Please refer to an issue with #<num>
+            in your commit message.""") 
+        db = self.env.get_db_cnx()
+        cursor = db.cursor()
+        cursor.execute("SELECT COUNT(id) FROM ticket WHERE "
+                       "status <> 'closed' AND id IN (%s)" % ','.join(tickets))
+        row = cursor.fetchone()
+        # At least one of the tickets mentioned in the log messages has to
+        # be open
+        if not row or row[0] < 1:
+            raise TracError("""Failed to commit as You are checking in files into a repository that restricts
+            commits without a reference to a open ticket. Please refer to an ticket with #<num>
+            in your commit message.""")
+   
 
 
 

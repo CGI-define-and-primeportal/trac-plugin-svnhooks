@@ -70,7 +70,6 @@ class SVNHookSystem(Component):
                         if hook == provider_name:
                             self.log.debug("Changeset path %s matches commit hook %s for parent path %s" % (path, provider_name, svnpath))
                             return True
-        self.log.debug("Changeset path %s doesn't match commit hook %s for parent path %s" % (path, provider_name, svnpath))
         return False
     
    

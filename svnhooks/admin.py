@@ -6,7 +6,7 @@ Created on 11 Apr 2012
 from trac.core import *
 from trac.admin.api import IAdminPanelProvider
 from trac.web.chrome import ITemplateProvider, add_javascript, add_stylesheet, add_notice, add_warning
-from trac.util.translation import _
+from trac.util.translation import _repo
 from model import SVNHooksModel
 from api import IConfigurableCommitHookProvider
 
@@ -22,6 +22,7 @@ class SVNHookAdmin(Component):
             yield ('access', _("Access Controls"), 'svnhooks', _("File Archive Hooks"))
 
     def render_admin_panel(self, req, cat, page, svnhooks_name):
+        req.perm.require('TRAC_ADMIN')
         data = {}
         obj = SVNHooksModel(self.env)
         if req.method == 'POST':

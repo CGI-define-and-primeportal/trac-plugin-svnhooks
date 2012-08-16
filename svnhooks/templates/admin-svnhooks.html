@@ -7,7 +7,7 @@
       xmlns:i18n="http://genshi.edgewall.org/i18n">
   <xi:include href="admin.html" />
   <head>
-    <title>SVNHooks</title>
+    <title>File Archive Hooks</title>
   </head>
   <script type="text/javascript">
 	jQuery(document).ready(function($) {
@@ -28,12 +28,12 @@
 	})
   </script>
   <body>
-    <h1 class="pagetitle">Manage SVNHooks</h1>
+    <h1 class="pagetitle">Manage File Archive Hooks</h1>
       
       <table class="listing">
 	    <thead>
 	      <tr>
-	        <th>List of SVN Hooks</th>
+	        <th>List of File Archive Hooks</th>
 	        <th style="width: 60px;" class="expandercol">&nbsp;</th>
 	      </tr>
 	    </thead>
@@ -64,11 +64,11 @@
               <div class="field">
                 <label>Hook:</label>
 	            <select name="hook" id="hook">
-	            	<option value="0">Select Subversion Hook Here</option>	            
+	            	<option value="0">Select File Archive Hook Here</option>
 	                <option py:for="hook_provider in svnhook_names.keys()" py:with="hook_name=svnhook_names[hook_provider];"  
 	                			value="${hook_provider}">${hook_name}</option>
 	            </select>
-	            <div><p class="help">Select valid subversion hook above to set options</p></div>
+	            <div><p class="help">Select valid File Archive hook above to set options</p></div>
               </div>
               <div id="hookdiv" style="display:none;">      
                 <div class="field">

@@ -6,7 +6,7 @@ Created on 11 Apr 2012
 from trac.core import *
 from trac.admin.api import IAdminPanelProvider
 from trac.web.chrome import ITemplateProvider, add_javascript, add_stylesheet, add_notice, add_warning
-from trac.util.translation import _repo
+from trac.util.translation import _
 from model import SVNHooksModel
 from api import IConfigurableCommitHookProvider
 

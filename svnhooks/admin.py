@@ -18,11 +18,11 @@ class SVNHookAdmin(Component):
     
     # IAdminPanelProvider
     def get_admin_panels(self, req):
-        if req.perm.has_permission('TRAC_ADMIN'):
+        if req.perm.has_permission('REPOSITORY_ADMIN'):
             yield ('access', _("Access Controls"), 'svnhooks', _("File Archive Hooks"))
 
     def render_admin_panel(self, req, cat, page, svnhooks_name):
-        req.perm.require('TRAC_ADMIN')
+        req.perm.require('REPOSITORY_ADMIN')
         data = {}
         obj = SVNHooksModel(self.env)
         if req.method == 'POST':

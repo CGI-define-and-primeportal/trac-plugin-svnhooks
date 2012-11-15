@@ -136,7 +136,7 @@ class RequireMessageCommitHook(Component):
 class RequireTicketCommitHook(Component):
     implements(IConfigurableCommitHookProvider, IRepositoryChangeManipulator)
     
-    hook_info = {"Require for Ticket number in Commit Message": """<p>
+    hook_info = {"Require Ticket Number In Commit Message": """<p>
                   This Subversion Hook will scan each commit message and will require commits to contain a Ticket
                   number.
                     </p><p>

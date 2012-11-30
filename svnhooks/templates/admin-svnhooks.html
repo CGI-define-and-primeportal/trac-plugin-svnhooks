@@ -82,7 +82,7 @@
               </div>
               <div class="field">
               <div class="buttons">
-                <input id="add" type="submit" class="sprite-button sprite-buttonCreate80 sprite-buttonSpecial" name="add" value="${_('Add')}"/>
+                <button id="add" type="submit" class="btn btn-mini btn-primary" name="add" value="${_('Add')}"><i class="icon-plus-sign icon-white"></i> Add</button>
               </div>
         	 </div>
         </form>
@@ -118,7 +118,9 @@
               </py:for>
               </table>
             <div class="buttons">
-              <input  type="submit" disabled="disabled" class="remove-button sprite-button sprite-button120"  name="remove" value="${_('Remove Hooks')}" />
+              <button type="submit" disabled="disabled" class="btn btn-mini btn-primary"  name="remove" value="${_('Remove Hooks')}">
+                <i class="icon-trash icon-white"></i> Remove Hooks
+              </button>
             </div>
             <p class="help">
               You can remove all items from this list to completely avoid hooks.

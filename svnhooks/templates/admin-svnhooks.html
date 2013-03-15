@@ -28,39 +28,39 @@
 	})
   </script>
   <body>
-    <h1 class="pagetitle">Manage File Archive Hooks</h1>
-      
-      <table class="listing">
-	    <thead>
-	      <tr>
-	        <th>List of File Archive Hooks</th>
-	        <th style="width: 60px;" class="expandercol">&nbsp;</th>
-	      </tr>
-	    </thead>
-	    <tbody>
-	    <py:for each="hook_provider in svnhook_names.keys()" py:with="hook_desc=svnhook_descriptions[hook_provider];
-	    		hook_name=svnhook_names[hook_provider];" >
-	        <tr class="listinfo even">
-	           <td>${hook_name}</td>
-	           <td style="text-align: center;" class="expandercol">
-	            <a href="#"><div class="moreinfo">More info</div></a>
-	          </td>
-	        </tr>
-	        <tr class="hidden even">
-	          <td class="info-border" colspan="2">
-                  <div class="hookdescription">
-                    ${hook_desc}
-                  </div> 
-	          </td>
-	         </tr>
-	    </py:for>    
-        </tbody>
-      </table>            
+    <h1>Manage File Archive Hooks</h1>
+      <div class="table-responsive">
+        <table class="rounded border-header full-width">
+  	    <thead>
+  	      <tr>
+  	        <th>List of File Archive Hooks</th>
+  	        <th style="width: 60px;" class="expandercol">&nbsp;</th>
+  	      </tr>
+  	    </thead>
+  	    <tbody>
+  	    <py:for each="i, hook_provider in enumerate(svnhook_names.keys())" py:with="hook_desc=svnhook_descriptions[hook_provider];
+  	    		hook_name=svnhook_names[hook_provider]; striping = i % 2 == 0 and 'even' or 'odd';" >
+  	        <tr class="listinfo ${striping}">
+  	           <td>${hook_name}</td>
+  	           <td style="text-align: center;" class="expandercol">
+  	            <a href="#"><div class="moreinfo"><i class="icon-resize-full"></i> More info</div></a>
+  	          </td>
+  	        </tr>
+  	        <tr class="hidden ${striping}">
+  	          <td class="info-border" colspan="2">
+                    <div class="hookdescription">
+                      ${hook_desc}
+                    </div> 
+  	          </td>
+  	         </tr>
+  	    </py:for>    
+          </tbody>
+        </table>
+      </div>            
       <div class="field">
-        <form  id="addsvnhook" method="post" class="blue form-basis margin-bottom" action="">
-              <div class="field">
-                <h4>Add Hook</h4>
-                </div>
+        <form  id="addsvnhook" method="post" class="box-primary color-none" action="">
+          <h3>Add Hook</h3>
+          <div class="info">Select a valid File Archive hook below to set options</div>
               <div class="field">
                 <label>Hook:</label>
 	            <select name="hook" id="hook">
@@ -68,12 +68,11 @@
 	                <option py:for="hook_provider in svnhook_names.keys()" py:with="hook_name=svnhook_names[hook_provider];"  
 	                			value="${hook_provider}">${hook_name}</option>
 	            </select>
-	            <div><p class="help">Select valid File Archive hook above to set options</p></div>
               </div>
               <div id="hookdiv" style="display:none;">      
                 <div class="field">
                   <h4 class="hookoptionlabel">Option Folder:</h4>
-                  <div class="hookoptiondescr">
+                  <div class="info">
                     Select the folder where the above selected hook required:
                   </div>
                   <label>Path:</label>
@@ -87,38 +86,38 @@
         	 </div>
         </form>
       </div>
-      <div class="clear">&nbsp;</div>
-       
           <form py:if="svnhooks" id="svnhook_table" method="post" action="">
-          <table class="table-style">
-          <py:for each="i, svnhook in enumerate(svnhooks)" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">          
-           <tbody>
-            <tr class="listinfo">
-            <td><h2>${svnhook_names[svnhook]}</h2>
-            </td>
-            <td style="text-align: center;" class="expandercol">
-                <a href="#"><div class="showoption">Show options</div></a>
-              </td>
-            </tr>
-            </tbody>
-            <tbody class="hidden">
-                <tr class="listinfo"><th class="sel">&nbsp;</th>
-                  <th>Path</th>
-                </tr>
-              <?python
-              [ID,PATH] = range(2)
-              ?>
-               <py:for each="i, row in enumerate(svnhooks[svnhook])" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">
-                <tr class="listinfo">
-                  <td class="sel"><input type="checkbox" name="sel" class="selcheckbox" value="${row[ID]}" /></td>
-                  <td class="author">${row[PATH]}</td>
-                 </tr>
+          <div class="table-responsive">
+            <table class="rounded border-header full-width">
+            <py:for each="i, svnhook in enumerate(svnhooks)" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">          
+             <thead>
+              <tr class="listinfo">
+                <th class="hook-check-row"><h3 class="no-spacing">${svnhook_names[svnhook]}</h3></th>
+                <th class="expandercol">
+                  <a href="#"><div class="showoption"><i class="icon-resize-full"></i> Show options</div></a>
+                </th>
+              </tr>
+              </thead>
+              <tbody class="hidden">
+                  <tr class="listinfo">
+                    <td class="sel">&nbsp;</td>
+                    <td class="author bold">Path</td>
+                  </tr>
+                <?python
+                [ID,PATH] = range(2)
+                ?>
+                 <py:for each="i, row in enumerate(svnhooks[svnhook])" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">
+                  <tr class="${stripe}">
+                    <td class="sel"><input type="checkbox" name="sel" class="selcheckbox" value="${row[ID]}" /></td>
+                    <td class="author">${row[PATH]}</td>
+                   </tr>
+                  </py:for>
+                </tbody>           
                 </py:for>
-              </tbody>           
-              </py:for>
-              </table>
+                </table>
+              </div>
             <div class="buttons">
-              <button type="submit" disabled="disabled" class="btn btn-mini btn-primary"  name="remove" value="${_('Remove Hooks')}">
+              <button type="submit" disabled="disabled" class="btn btn-mini btn-primary remove-button"  name="remove" value="${_('Remove Hooks')}">
                 <i class="icon-trash icon-white"></i> Remove Hooks
               </button>
             </div>

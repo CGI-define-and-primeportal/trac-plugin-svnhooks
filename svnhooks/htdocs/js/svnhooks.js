@@ -1,15 +1,15 @@
 (function($){
   $(document).ready(function(e){
     $('.moreinfo,.lessinfo').click(function(e) {
-            $(this).toggleClass('moreinfo lessinfo')
+            $("i", this).toggleClass('icon-resize-full icon-resize-small')
             $(this).closest('tr').next().toggleClass('hidden');
             return false;
      });
      
      $('.showoption,.hideoption').click(function(e) {
-                 $(this).toggleClass('showoption hideoption')
-                 $(this).closest('tbody').next().toggleClass('hidden');
-                 return false;
+       $("i", this).toggleClass('icon-resize-full icon-resize-small')
+       $(this).closest('thead').next().toggleClass('hidden');
+       return false;
      });
      
      $(".selcheckbox").click(function() {

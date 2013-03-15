@@ -16,12 +16,6 @@ p {
   width: 110px;
   cursor: pointer;
 }
-.moreinfo, .showoption {
-  background: url(../../define/bg-tabheader-arrowdown.png) no-repeat 0% 14%;
-}
-.lessinfo, .hideoption {
-  background: url(../../define/bg-tabheader-arrowup.png) no-repeat 0% 14%;
-}
 .hidden {
   display: none;
 }
@@ -56,3 +50,6 @@ table.table-style tbody th, table.table-style tbody td {
 table.table-style tbody tr, table.lsiting tbody tr {
     border-bottom: 1px solid #CCCCCC;
 }
+
+#svnhook_table .expandercol { width:100%;}
+#svnhook_table .hook-check-row { min-width: 190px; }

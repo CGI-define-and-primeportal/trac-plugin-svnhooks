@@ -1,0 +1,130 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:i18n="http://genshi.edgewall.org/i18n">
+  <xi:include href="admin.html" />
+  <head>
+    <title>File Archive Hooks</title>
+  </head>
+  <script type="text/javascript">
+	jQuery(document).ready(function($) {
+		  $("#hook").change(function(){
+			  if (this.selectedIndex != 0) {
+				  $("#hookdiv").show();
+			  } else {
+				  $("#hookdiv").hide();
+			  }
+		  });
+	
+		  $("#path").autocomplete({
+		       source: function(request, response) {
+		         $.get("${href.diff()}", {q:request.term, format:'json'}, response)
+		       },
+		       minLength: 1
+		     });
+	})
+  </script>
+  <body>
+    <h1>Manage File Archive Hooks</h1>
+      <div class="table-responsive">
+        <table class="rounded border-header full-width">
+  	    <thead>
+  	      <tr>
+  	        <th>List of File Archive Hooks</th>
+  	        <th style="width: 60px;" class="expandercol">&nbsp;</th>
+  	      </tr>
+  	    </thead>
+  	    <tbody>
+  	    <py:for each="i, hook_provider in enumerate(svnhook_names.keys())" py:with="hook_desc=svnhook_descriptions[hook_provider];
+  	    		hook_name=svnhook_names[hook_provider]; striping = i % 2 == 0 and 'even' or 'odd';" >
+  	        <tr class="listinfo ${striping}">
+  	           <td>${hook_name}</td>
+  	           <td style="text-align: center;" class="expandercol">
+  	            <a href="#"><div class="moreinfo"><i class="icon-resize-full"></i> More info</div></a>
+  	          </td>
+  	        </tr>
+  	        <tr class="hidden ${striping}">
+  	          <td class="info-border" colspan="2">
+                    <div class="hookdescription">
+                      ${hook_desc}
+                    </div> 
+  	          </td>
+  	         </tr>
+  	    </py:for>    
+          </tbody>
+        </table>
+      </div>            
+      <div class="field">
+        <form  id="addsvnhook" method="post" class="box-primary color-none" action="">
+          <h3>Add Hook</h3>
+          <div class="info">Select a valid File Archive hook below to set options</div>
+              <div class="field">
+                <label>Hook:</label>
+	            <select name="hook" id="hook">
+	            	<option value="0">Select File Archive Hook Here</option>
+	                <option py:for="hook_provider in svnhook_names.keys()" py:with="hook_name=svnhook_names[hook_provider];"  
+	                			value="${hook_provider}">${hook_name}</option>
+	            </select>
+              </div>
+              <div id="hookdiv" style="display:none;">      
+                <div class="field">
+                  <h4 class="hookoptionlabel">Option Folder:</h4>
+                  <div class="info">
+                    Select the folder where the above selected hook required:
+                  </div>
+                  <label>Path:</label>
+                  <input type="text" name="path" id="path" class="textwidget" size="60" title="This field supports auto-complete, except for paths which your own user cannot read."/>
+                 </div>
+              </div>
+              <div class="field">
+              <div class="buttons">
+                <button id="add" type="submit" class="btn btn-mini btn-primary" name="add" value="${_('Add')}"><i class="icon-plus-sign icon-white"></i> Add</button>
+              </div>
+        	 </div>
+        </form>
+      </div>
+          <form py:if="svnhooks" id="svnhook_table" method="post" action="">
+          <div class="table-responsive">
+            <table class="rounded border-header full-width">
+            <py:for each="i, svnhook in enumerate(svnhooks)" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">          
+             <thead>
+              <tr class="listinfo">
+                <th class="hook-check-row"><h3 class="no-spacing">${svnhook_names[svnhook]}</h3></th>
+                <th class="expandercol">
+                  <a href="#"><div class="showoption"><i class="icon-resize-full"></i> Show options</div></a>
+                </th>
+              </tr>
+              </thead>
+              <tbody class="hidden">
+                  <tr class="listinfo">
+                    <td class="sel">&nbsp;</td>
+                    <td class="author bold">Path</td>
+                  </tr>
+                <?python
+                [ID,PATH] = range(2)
+                ?>
+                 <py:for each="i, row in enumerate(svnhooks[svnhook])" py:with="stripe = i % 2 == 0 and 'even' or 'odd'">
+                  <tr class="${stripe}">
+                    <td class="sel"><input type="checkbox" name="sel" class="selcheckbox" value="${row[ID]}" /></td>
+                    <td class="author">${row[PATH]}</td>
+                   </tr>
+                  </py:for>
+                </tbody>           
+                </py:for>
+                </table>
+              </div>
+            <div class="buttons">
+              <button type="submit" disabled="disabled" class="btn btn-mini btn-primary remove-button"  name="remove" value="${_('Remove Hooks')}">
+                <i class="icon-trash icon-white"></i> Remove Hooks
+              </button>
+            </div>
+            <p class="help">
+              You can remove all items from this list to completely avoid hooks.
+            </p>
+          </form>
+  </body>
+
+</html>

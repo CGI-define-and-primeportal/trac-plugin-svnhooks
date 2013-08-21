@@ -19,30 +19,35 @@ class SVNHooksModel(object):
     
     def validate(self, path=None, hook=None):
         count = 0
-        cursor = self._get_db().cursor()
+        db = self._get_db()
+        cursor = db.cursor()
         if path:
             cursor.execute("""SELECT count(*) FROM svnhooks WHERE path=%s and hook=%s""", (path, hook))
             (count, ) = cursor.fetchone()
         return count
     
     def get_by_id(self, id):
-        cursor = self._get_db().cursor()
+        db = self._get_db()
+        cursor = db.cursor()
         cursor.execute("""SELECT path, hook FROM svnhooks WHERE id=%s""", (id,))
         return cursor.fetchone()
         
     def get_by_path(self, path):
-        cursor = self._get_db().cursor()
+        db = self._get_db()
+        cursor = db.cursor()
         cursor.execute("""SELECT id, hook FROM svnhooks WHERE path=%s""", (path,))
         return list(cursor)
     
     def get_by_hook(self, hook):
-        cursor = self._get_db().cursor()
+        db = self._get_db()
+        cursor = db.cursor()
         cursor.execute("""SELECT id, path FROM svnhooks WHERE hook=%s""", (hook,))
         return cursor.fetchone()
      
     def getall_path(self):
         data = {}
-        cursor = self._get_db().cursor()
+        db = self._get_db()
+        cursor = db.cursor()
         cursor.execute("""SELECT * FROM svnhooks ORDER BY path, id""")
         for (id, path, hook) in cursor:
             if path not in data:
@@ -53,7 +58,8 @@ class SVNHooksModel(object):
 
     def getall(self):
         data = {}
-        cursor = self._get_db().cursor()
+        db = self._get_db()
+        cursor = db.cursor()
         cursor.execute("""SELECT * FROM svnhooks ORDER BY id, path""")
         for (id, path, hook) in cursor:
             if hook not in data:

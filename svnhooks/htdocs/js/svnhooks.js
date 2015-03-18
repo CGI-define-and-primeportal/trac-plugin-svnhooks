@@ -1,13 +1,13 @@
 (function($){
   $(document).ready(function(e){
     $('.moreinfo,.lessinfo').click(function(e) {
-            $("i", this).toggleClass('icon-resize-full icon-resize-small')
+            $("i", this).toggleClass('fa fa-expand fa-compress')
             $(this).closest('tr').next().toggleClass('hidden');
             return false;
      });
      
      $('.showoption,.hideoption').click(function(e) {
-       $("i", this).toggleClass('icon-resize-full icon-resize-small')
+       $("i", this).toggleClass('fa fa-expand fa-compress')
        $(this).closest('thead').next().toggleClass('hidden');
        return false;
      });

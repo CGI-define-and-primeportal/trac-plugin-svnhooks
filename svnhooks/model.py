@@ -1,6 +1,4 @@
 from trac.db.schema import Table, Column, Index
-from datetime import datetime, timedelta
-from trac.util.datefmt import from_utimestamp, to_utimestamp, utc
 
 class SVNHooksModel(object):
     svnhooks_schema = [

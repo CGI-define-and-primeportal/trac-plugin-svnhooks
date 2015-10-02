@@ -34,6 +34,7 @@ Created on 10 Apr 2012
 # Created on 5 January 2012
 # @author prabu subramanian
 
+from pkg_resources import resource_filename
 import re
 
 from trac.core import *
